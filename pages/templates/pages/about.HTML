@@ -2,13 +2,121 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extra_styles %}
+<style>
+    /* ── About Hero ── */
+    .about-hero {
+        background: var(--ink);
+        background-image:
+            radial-gradient(ellipse at 50% 80%, rgba(139,99,64,0.2) 0%, transparent 60%);
+        color: var(--parchment);
+        padding: 72px 2rem 60px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+    }
+
+    .about-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+
+    .about-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(26px, 4vw, 44px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+    }
+
+    .about-hero-divider {
+        width: 80px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--gold), transparent);
+        margin: 0 auto 24px;
+    }
+
+    .about-hero p {
+        font-size: 18px;
+        color: var(--parchment-dark);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.9;
+        font-style: italic;
+    }
+
+    /* ── About body text ── */
+    .about-body {
+        background: var(--parchment);
+        padding: 56px 2rem;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .about-body h2 {
+        font-family: 'Cinzel', serif;
+        font-size: 20px;
+        color: var(--ink);
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--parchment-dark);
+    }
+
+    .about-body p {
+        font-size: 16px;
+        line-height: 1.9;
+        color: var(--ink);
+        margin-bottom: 20px;
+    }
+
+    /* Pull-quote style block */
+    .tome-quote {
+        border-left: 3px solid var(--gold-dark);
+        padding: 16px 20px;
+        background: #fdf6ea;
+        margin: 32px 0;
+        font-style: italic;
+        font-size: 17px;
+        color: var(--ink-mid);
+        line-height: 1.8;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="bg-dark text-white px-4 py-5 text-center">
-    <div class="py-5">
-        <h1 class="display-5 fw-bold text-white">{{ title }}</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="fs-5 mb-4 text-secondary">{{ text }}</p>
-        </div>
-    </div>
+
+<!-- Hero -->
+<div class="about-hero">
+    <p class="about-hero-eyebrow">About This Tome</p>
+    <h1>{{ title }}</h1>
+    <div class="about-hero-divider"></div>
+    <p>{{ text }}</p>
 </div>
+
+<!-- Body content — add your own text or Django template variables here -->
+<div class="about-body">
+    <h2>What is the Arcane Compendium?</h2>
+    <p>
+        This compendium is a reference guide for spellcasters of all disciplines. Browse, search,
+        and filter spells by school, level, and class — whether you are a Wizard memorising
+        incantations or a Cleric seeking divine favour.
+    </p>
+
+    <div class="tome-quote">
+        "Magic is not merely a tool — it is a language, spoken between the will of the caster
+        and the fabric of reality itself."
+    </div>
+
+    <h2>How to Use It</h2>
+    <p>
+        Navigate to the home page to browse featured spells, or use the search and filter tools
+        to find exactly the spell you need. Each entry includes casting time, range, components,
+        duration, and a full description.
+    </p>
+</div>
+
 {% endblock %}

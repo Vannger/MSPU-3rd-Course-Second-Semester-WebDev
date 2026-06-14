@@ -1,0 +1,156 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .auth-hero {
+        background: var(--ink);
+        padding: 56px 2rem 48px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+    }
+    .auth-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .auth-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(22px, 4vw, 36px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin: 0;
+    }
+    .auth-section { background: var(--parchment); padding: 48px 2rem 64px; }
+    .tome-form-card {
+        max-width: 480px;
+        margin: 0 auto;
+        background: #fdf6ea;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 36px 40px;
+        position: relative;
+    }
+    .tome-form-card::before {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(196,164,106,0.3);
+        pointer-events: none;
+        border-radius: 1px;
+    }
+    .form-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        color: var(--ink);
+        letter-spacing: 1px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--parchment-dark);
+    }
+    .tome-field { margin-bottom: 20px; }
+    .tome-label {
+        display: block;
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--ink-light);
+        margin-bottom: 6px;
+    }
+    .tome-input {
+        width: 100%;
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 9px 13px;
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 15px;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        box-sizing: border-box;
+    }
+    .tome-input:focus {
+        border-color: var(--gold-dark);
+        box-shadow: 0 0 0 3px rgba(212,164,76,0.18);
+    }
+    .tome-errors { list-style:none; padding:0; margin-top:5px; }
+    .tome-errors li { font-size:13px; color:#8b2020; font-style:italic; }
+    .btn-submit {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 11px 36px;
+        background: var(--gold-dark);
+        border: 1px solid var(--gold);
+        color: var(--parchment);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--gold); color: var(--ink); }
+    .auth-footer-link {
+        display: block;
+        text-align: center;
+        margin-top: 16px;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--ink-light);
+    }
+    .auth-footer-link a { color: var(--ink-mid); }
+    .auth-footer-link a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-hero">
+    <p class="auth-hero-eyebrow">Join the Order</p>
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="auth-section">
+    <div class="tome-form-card">
+        <div class="form-section-title">Create Your Account</div>
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <ul class="tome-errors">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <ul class="tome-errors">{% for e in form.password1.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <ul class="tome-errors">{% for e in form.password2.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+        <p class="auth-footer-link">Already have an account? <a href="{% url 'login' %}">Login here.</a></p>
+    </div>
+</div>
+{% endblock %}

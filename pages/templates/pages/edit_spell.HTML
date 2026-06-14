@@ -1,0 +1,199 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .add-hero {
+        background: var(--ink);
+        background-image: radial-gradient(ellipse at 50% 80%, rgba(139,99,64,0.2) 0%, transparent 60%);
+        color: var(--parchment);
+        padding: 56px 2rem 48px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+    }
+    .add-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .add-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(20px, 4vw, 36px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin-bottom: 0;
+    }
+    .form-section { background: var(--parchment); padding: 48px 2rem 64px; }
+    .tome-form-card {
+        max-width: 640px;
+        margin: 0 auto;
+        background: #fdf6ea;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 36px 40px;
+        position: relative;
+    }
+    .tome-form-card::before {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(196,164,106,0.3);
+        pointer-events: none;
+        border-radius: 1px;
+    }
+    .form-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        color: var(--ink);
+        letter-spacing: 1px;
+        margin-bottom: 28px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--parchment-dark);
+    }
+    .tome-field { margin-bottom: 22px; }
+    .tome-label {
+        display: block;
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--ink-light);
+        margin-bottom: 6px;
+    }
+    .tome-input {
+        width: 100%;
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 9px 13px;
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 15px;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        box-sizing: border-box;
+    }
+    .tome-input:focus {
+        border-color: var(--gold-dark);
+        box-shadow: 0 0 0 3px rgba(212,164,76,0.18);
+    }
+    .tome-textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+    .tome-errors { list-style:none; padding:0; margin-top:5px; }
+    .tome-errors li { font-size:13px; color:#8b2020; font-style:italic; }
+    .tome-hint { font-size:12px; color:var(--ink-light); font-style:italic; margin-top:4px; }
+    .btn-submit {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 11px 36px;
+        background: var(--gold-dark);
+        border: 1px solid var(--gold);
+        color: var(--parchment);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--gold); color: var(--ink); }
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 14px;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--ink-light);
+        text-decoration: none;
+    }
+    .cancel-link:hover { color: var(--ink); text-decoration: underline; }
+
+    /* Current image preview */
+    .current-image {
+        margin-bottom: 10px;
+    }
+    .current-image img {
+        max-height: 120px;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+    }
+    .current-image p {
+        font-size: 12px;
+        color: var(--ink-light);
+        font-style: italic;
+        margin-top: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="add-hero">
+    <p class="add-hero-eyebrow">Scribe's Desk</p>
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="form-section">
+    <div class="tome-form-card">
+        <div class="form-section-title">Revise This Entry</div>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div style="background:#f9e8e8;border:1px solid #c98080;border-radius:2px;padding:10px 14px;margin-bottom:20px;font-size:14px;color:#6b1e1e;font-style:italic;">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}<ul class="tome-errors">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.spell_lvl.id_for_label }}">{{ form.spell_lvl.label }}</label>
+                {{ form.spell_lvl }}
+                <p class="tome-hint">0 = Cantrip, 1–9 = Spell level.</p>
+                {% if form.spell_lvl.errors %}<ul class="tome-errors">{% for e in form.spell_lvl.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.desc.id_for_label }}">{{ form.desc.label }}</label>
+                {{ form.desc }}
+                {% if form.desc.errors %}<ul class="tome-errors">{% for e in form.desc.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.add_date.id_for_label }}">{{ form.add_date.label }}</label>
+                {{ form.add_date }}
+                {% if form.add_date.errors %}<ul class="tome-errors">{% for e in form.add_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.image.id_for_label }}">{{ form.image.label }}</label>
+                {% if spell.image %}
+                <div class="current-image">
+                    <img src="{{ spell.image.url }}" alt="Current image">
+                    <p>Current image — upload a new one to replace it.</p>
+                </div>
+                {% endif %}
+                {{ form.image }}
+                {% if form.image.errors %}<ul class="tome-errors">{% for e in form.image.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Save Changes</button>
+        </form>
+
+        <a href="{% url 'home' %}" class="cancel-link">← Return to the Compendium</a>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,40 +1,251 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Мой Сервис{% endblock %}</title>
+    <title>{% block title %}Arcane Compendium{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ── Palette ── */
+        :root {
+            --parchment:     #f5ede0;
+            --parchment-mid: #ecdcc4;
+            --parchment-dark:#d4b896;
+            --ink:           #2c1a0e;
+            --ink-mid:       #6b4226;
+            --ink-light:     #8b6340;
+            --gold:          #d4a44c;
+            --gold-dark:     #a87c2a;
+        }
+
+        /* ── Base ── */
+        body {
+            background-color: var(--ink);
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(100,60,20,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(100,60,20,0.12) 0%, transparent 50%);
+            color: var(--parchment);
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--ink); }
+        ::-webkit-scrollbar-thumb { background: var(--ink-light); border-radius: 4px; }
+
+        /* ── Wrapper ── */
+        .tome-wrapper {
+            max-width: 1140px;
+            margin: 0 auto;
+            background: var(--parchment);
+            color: var(--ink);
+            box-shadow: 0 0 60px rgba(0,0,0,0.7), inset 0 0 80px rgba(100,60,20,0.08);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ── Header / Nav ── */
+        .tome-header {
+            background: var(--ink);
+            border-bottom: 3px solid var(--gold);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tome-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tome-brand {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tome-brand:hover { color: var(--parchment-dark); }
+
+        .tome-brand-rune {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: var(--parchment-dark);
+            text-decoration: none;
+            padding: 6px 14px;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            transition: all 0.15s;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--gold);
+            border-color: var(--gold-dark);
+            background: rgba(212,164,76,0.08);
+        }
+
+        .tome-nav-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-tome {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 6px 18px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+        }
+
+        .btn-tome-outline {
+            background: transparent;
+            border: 1px solid var(--parchment-dark);
+            color: var(--parchment-dark);
+        }
+        .btn-tome-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-tome-primary {
+            background: var(--gold-dark);
+            border: 1px solid var(--gold);
+            color: var(--parchment);
+        }
+        .btn-tome-primary:hover {
+            background: var(--gold);
+            color: var(--ink);
+        }
+
+        /* ── Page content area ── */
+        .tome-content {
+            padding: 0;
+        }
+
+        /* ── Divider ── */
+        .tome-divider {
+            border: none;
+            border-top: 1px solid var(--parchment-dark);
+            margin: 0;
+        }
+
+        /* ── Footer ── */
+        .tome-footer {
+            background: var(--ink);
+            border-top: 3px solid var(--gold);
+            padding: 20px 2rem;
+            text-align: center;
+        }
+
+        .tome-footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: var(--ink-light);
+            margin: 0;
+        }
+
+        /* ── Utility: parchment section ── */
+        .parchment-section {
+            background: var(--parchment);
+            color: var(--ink);
+        }
+
+        .parchment-section-alt {
+            background: var(--parchment-mid);
+            color: var(--ink);
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
 </head>
-<body class="bg-dark text-white">
+<body>
+    <div class="tome-wrapper">
 
-    <main class="container">
-        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-            <div class="col-md-3 mb-2 mb-md-0">
-                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                    <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"></svg>
+        <header class="tome-header">
+            <nav class="tome-nav">
+                <a href="/" class="tome-brand">
+                    <span class="tome-brand-rune">⚔</span>
+                    Arcane Compendium
                 </a>
-            </div>
 
-            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="{% url 'home' %}" class="nav-link px-2 {% if request.resolver_match.url_name == 'home' %}link-secondary{% else %}text-white{% endif %}">Home</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link px-2 {% if request.resolver_match.url_name == 'about' %}link-secondary{% else %}text-white{% endif %}">About</a></li>
-            </ul>
+                <ul class="nav-links">
+                    <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a></li>
+                    <li><a href="{% url 'add_spell' %}" class="{% if request.resolver_match.url_name == 'add_spell' %}active{% endif %}">+ Add Spell</a></li>
+                </ul>
 
-            <div class="col-md-3 text-end">
-                <button type="button" class="btn btn-outline-light me-2">Login</button>
-                <button type="button" class="btn btn-primary">Sign-up</button>
-            </div>
+                <div class="tome-nav-actions">
+                    {% if user.is_authenticated %}
+                        <span style="font-family:'Cinzel',serif; font-size:12px; color:var(--gold); letter-spacing:1px; align-self:center;">
+                            ⚔ {{ user.username }}
+                        </span>
+                        <a href="{% url 'logout' %}" class="btn-tome btn-tome-outline">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-tome btn-tome-outline">Login</a>
+                        <a href="{% url 'register' %}" class="btn-tome btn-tome-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </nav>
         </header>
 
-        {% block content %}
-        {% endblock %}
+        <main class="tome-content">
+            {% if messages %}
+            <div style="background:var(--parchment); padding: 0 2rem;">
+                {% for message in messages %}
+                <div style="
+                    font-family:'EB Garamond',serif;
+                    font-size:15px;
+                    padding:10px 16px;
+                    margin: 12px 0;
+                    border-radius:2px;
+                    border-left: 3px solid {% if message.tags == 'error' %}#8b2020{% else %}var(--gold-dark){% endif %};
+                    background: {% if message.tags == 'error' %}#f9e8e8{% else %}#fdf6ea{% endif %};
+                    color: {% if message.tags == 'error' %}#6b1e1e{% else %}var(--ink){% endif %};
+                ">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-        <footer class="py-4 mt-4 border-top border-secondary">
-            <p class="text-center text-white-50">© 2026 Company, Inc</p>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer class="tome-footer">
+            <p>⚔ &nbsp; © 2026 Arcane Compendium &nbsp; ⚔</p>
         </footer>
-    </main>
+
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

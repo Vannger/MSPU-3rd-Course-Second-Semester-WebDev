@@ -1,0 +1,285 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ── Page hero ── */
+    .add-hero {
+        background: var(--ink);
+        background-image: radial-gradient(ellipse at 50% 80%, rgba(139,99,64,0.2) 0%, transparent 60%);
+        color: var(--parchment);
+        padding: 56px 2rem 48px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+    }
+
+    .add-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .add-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(22px, 4vw, 38px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin-bottom: 0;
+    }
+
+    /* ── Form container ── */
+    .form-section {
+        background: var(--parchment);
+        padding: 48px 2rem 64px;
+    }
+
+    .tome-form-card {
+        max-width: 640px;
+        margin: 0 auto;
+        background: #fdf6ea;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 36px 40px;
+        position: relative;
+    }
+
+    /* Inner border decoration */
+    .tome-form-card::before {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(196,164,106,0.3);
+        pointer-events: none;
+        border-radius: 1px;
+    }
+
+    .form-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        color: var(--ink);
+        letter-spacing: 1px;
+        margin-bottom: 28px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--parchment-dark);
+    }
+
+    /* ── Form fields ── */
+    .tome-field {
+        margin-bottom: 22px;
+    }
+
+    .tome-label {
+        display: block;
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--ink-light);
+        margin-bottom: 6px;
+    }
+
+    /* Applied via widget attrs in forms.py */
+    .tome-input {
+        width: 100%;
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 9px 13px;
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 15px;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        box-sizing: border-box;
+    }
+
+    .tome-input:focus {
+        border-color: var(--gold-dark);
+        box-shadow: 0 0 0 3px rgba(212,164,76,0.18);
+    }
+
+    .tome-textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.7;
+    }
+
+    /* ── Field errors ── */
+    .tome-errors {
+        margin-top: 5px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .tome-errors li {
+        font-size: 13px;
+        color: #8b2020;
+        font-style: italic;
+    }
+
+    /* ── Hint text ── */
+    .tome-hint {
+        font-size: 12px;
+        color: var(--ink-light);
+        font-style: italic;
+        margin-top: 4px;
+    }
+
+    /* ── Submit button ── */
+    .btn-submit {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 11px 36px;
+        background: var(--gold-dark);
+        border: 1px solid var(--gold);
+        color: var(--parchment);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+        background: var(--gold);
+        color: var(--ink);
+    }
+
+    /* ── Cancel link ── */
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 14px;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--ink-light);
+        text-decoration: none;
+    }
+    .cancel-link:hover { color: var(--ink); text-decoration: underline; }
+
+    /* ── Non-field errors banner ── */
+    .tome-error-banner {
+        background: #f9e8e8;
+        border: 1px solid #c98080;
+        border-radius: 2px;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #6b1e1e;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="add-hero">
+    <p class="add-hero-eyebrow">Scribe's Desk</p>
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="form-section">
+    <div class="tome-form-card">
+        <div class="form-section-title">Inscribe a New Spell</div>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="tome-error-banner">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Spell Name -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.name.id_for_label }}">
+                    {{ form.name.label }}
+                </label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.name.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Spell Level -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.spell_lvl.id_for_label }}">
+                    {{ form.spell_lvl.label }}
+                </label>
+                {{ form.spell_lvl }}
+                <p class="tome-hint">Enter 0 for a cantrip, or 1–9 for levelled spells.</p>
+                {% if form.spell_lvl.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.spell_lvl.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.desc.id_for_label }}">
+                    {{ form.desc.label }}
+                </label>
+                {{ form.desc }}
+                {% if form.desc.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.desc.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Date Added -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.add_date.id_for_label }}">
+                    {{ form.add_date.label }}
+                </label>
+                {{ form.add_date }}
+                {% if form.add_date.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.add_date.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Image -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.image.id_for_label }}">
+                    {{ form.image.label }}
+                </label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.image.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Inscribe Spell</button>
+        </form>
+
+        <a href="{% url 'home' %}" class="cancel-link">← Return to the Compendium</a>
+    </div>
+</div>
+
+{% endblock %}

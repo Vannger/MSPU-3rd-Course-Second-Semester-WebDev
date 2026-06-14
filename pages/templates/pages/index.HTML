@@ -2,37 +2,313 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extra_styles %}
+<style>
+    /* ── Hero ── */
+    .tome-hero {
+        background: var(--ink);
+        background-image:
+            radial-gradient(ellipse at 30% 60%, rgba(139,99,64,0.25) 0%, transparent 55%),
+            radial-gradient(ellipse at 70% 30%, rgba(212,164,76,0.12) 0%, transparent 50%);
+        color: var(--parchment);
+        padding: 80px 2rem 70px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Decorative corner runes */
+    .tome-hero::before,
+    .tome-hero::after {
+        content: '✦';
+        position: absolute;
+        font-size: 60px;
+        color: rgba(212,164,76,0.08);
+        line-height: 1;
+    }
+    .tome-hero::before { top: 20px; left: 30px; }
+    .tome-hero::after  { bottom: 20px; right: 30px; }
+
+    .tome-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 16px;
+    }
+
+    .tome-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(28px, 5vw, 52px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+
+    .tome-hero p {
+        font-size: 18px;
+        color: var(--parchment-dark);
+        max-width: 540px;
+        margin: 0 auto 32px;
+        line-height: 1.8;
+        font-style: italic;
+    }
+
+    .tome-hero-divider {
+        width: 120px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--gold), transparent);
+        margin: 0 auto 32px;
+    }
+
+    .btn-hero {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 12px 36px;
+        background: var(--gold-dark);
+        border: 1px solid var(--gold);
+        color: var(--parchment);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-hero:hover {
+        background: var(--gold);
+        color: var(--ink);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(212,164,76,0.25);
+    }
+
+    /* ── Spell Cards ── */
+    .spells-section {
+        background: var(--parchment);
+        padding: 48px 2rem;
+    }
+
+    .section-heading {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--ink-light);
+        margin-bottom: 8px;
+    }
+
+    .section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 24px;
+        color: var(--ink);
+        font-weight: 600;
+        margin-bottom: 32px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--parchment-dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--parchment-dark);
+    }
+
+    .spell-card {
+        background: #fdf6ea;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        height: 100%;
+        transition: border-color 0.15s, transform 0.15s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Inner border decoration */
+    .spell-card::before {
+        content: '';
+        position: absolute;
+        inset: 4px;
+        border: 1px solid rgba(196,164,106,0.3);
+        pointer-events: none;
+        border-radius: 1px;
+    }
+
+    .spell-card:hover {
+        border-color: var(--ink-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(44,26,14,0.12);
+    }
+
+    .spell-card-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+    }
+
+    .spell-card-img svg rect { fill: #1a0f06; }
+
+    .card-school-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: var(--ink);
+        color: var(--gold);
+        padding: 3px 10px;
+        border-radius: 2px;
+        border: 1px solid var(--gold-dark);
+    }
+
+    .spell-card-body {
+        padding: 16px 18px;
+    }
+
+    .spell-card-title {
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 4px;
+    }
+
+    .spell-card-subtitle {
+        font-size: 13px;
+        color: var(--ink-mid);
+        font-style: italic;
+        margin-bottom: 10px;
+    }
+
+    .spell-card-text {
+        font-size: 14px;
+        color: var(--ink);
+        line-height: 1.7;
+        margin-bottom: 16px;
+    }
+
+    .spell-card-footer {
+        border-top: 1px solid var(--parchment-mid);
+        padding: 10px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-card {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.15s;
+        background: transparent;
+        border: 1px solid var(--ink-light);
+        color: var(--ink-mid);
+    }
+    .btn-card:hover {
+        background: var(--ink);
+        color: var(--gold);
+        border-color: var(--ink);
+    }
+
+    .card-level-tag {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: var(--ink-light);
+        letter-spacing: 0.5px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="bg-dark text-white px-4 py-5 text-center">
-    <div class="py-5">
-        <h1 class="display-5 fw-bold text-white">{{ title }}</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="fs-5 mb-4 text-secondary">{{ welcome_text }}</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3 fw-bold">Главная</button>
-            </div>
-        </div>
+
+<!-- Hero -->
+<div class="tome-hero">
+    <p class="tome-hero-eyebrow">Welcome, Adventurer</p>
+    <h1>{{ title }}</h1>
+    <div class="tome-hero-divider"></div>
+    <p>{{ welcome_text }}</p>
+    <a href="#spells" class="btn-hero">Browse the Compendium</a>
+</div>
+
+<!-- Spell Cards -->
+<div class="spells-section" id="spells">
+    <div class="d-flex align-items-center justify-content-between mb-1">
+        <p class="section-heading mb-0">All Entries</p>
+        <a href="{% url 'add_spell' %}" class="btn-hero" style="font-size:12px; padding:8px 20px;">+ Add Spell</a>
     </div>
-</div> <div class="album py-5 bg-dark" data-bs-theme="dark">
+    <h2 class="section-title">Spells of Note</h2>
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        
+
+        {% for spell in spells %}
         <div class="col">
-            <div class="card shadow-sm h-100">
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid slice"><rect width="100%" height="100%" fill="#333"/></svg>
-                <div class="card-body">
-                    <h5 class="card-title">Заголовок 1</h5>
-                    <p class="card-text">Краткое описание карточки.</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-light">View</button>
-                            <button type="button" class="btn btn-sm btn-outline-light">Edit</button>
-                        </div>
-                        <small class="text-body-secondary">9 mins</small>
+            <div class="spell-card">
+                {% if spell.image %}
+                    <img src="{{ spell.image.url }}" alt="{{ spell.name }}" class="spell-card-img" style="object-fit:cover;">
+                {% else %}
+                    <svg class="spell-card-img" xmlns="http://www.w3.org/2000/svg" style="height:180px;">
+                        <rect width="100%" height="100%" fill="#1a0f06"/>
+                        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="48" fill="#d4a44c">
+                            {% if spell.spell_lvl == 0 %}✦
+                            {% elif spell.spell_lvl <= 3 %}🔥
+                            {% elif spell.spell_lvl <= 6 %}⚡
+                            {% else %}💀
+                            {% endif %}
+                        </text>
+                    </svg>
+                {% endif %}
+                <div class="spell-card-body">
+                    <div class="spell-card-title">{{ spell.name }}</div>
+                    <div class="spell-card-subtitle">
+                        {% if spell.spell_lvl == 0 %}Cantrip
+                        {% elif spell.spell_lvl == 1 %}1st-level
+                        {% elif spell.spell_lvl == 2 %}2nd-level
+                        {% elif spell.spell_lvl == 3 %}3rd-level
+                        {% else %}{{ spell.spell_lvl }}th-level
+                        {% endif %}
+                        · Added {{ spell.add_date }}
                     </div>
+                    <p class="spell-card-text">{{ spell.desc|truncatewords:20 }}</p>
+                </div>
+                <div class="spell-card-footer">
+                    <span class="card-level-tag">
+                        {% if spell.spell_lvl == 0 %}Cantrip{% else %}Level {{ spell.spell_lvl }}{% endif %}
+                    </span>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or spell.author == user %}
+                            <a href="{% url 'edit_spell' spell.id %}" class="btn-card">Edit</a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
-        
+        {% empty %}
+        <div class="col-12">
+            <p style="font-family:'Cinzel',serif; color:var(--ink-light); font-style:italic; text-align:center; padding:40px 0;">
+                The tome is empty. <a href="{% url 'add_spell' %}" style="color:var(--ink-mid);">Inscribe the first spell.</a>
+            </p>
+        </div>
+        {% endfor %}
+
     </div>
 </div>
+
 {% endblock %}
