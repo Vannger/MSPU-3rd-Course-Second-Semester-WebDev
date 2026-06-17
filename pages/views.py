@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .forms import SpellForm, RegisterForm, FeedbackForm
+from .forms import SpellForm, RegisterForm, FeedbackForm, CommentForm
 from .models import Spell, Tag
 
 
@@ -23,6 +23,7 @@ def spell_detail(request, spell_id):
     return render(request, 'pages/detail.html', {
         'title': spell.name,
         'spell': spell,
+        'comment_form': CommentForm(),
     })
 
 
@@ -134,3 +135,23 @@ def feedback_view(request):
     else:
         form = FeedbackForm()
     return render(request, 'pages/feedback.html', {'form': form})
+
+
+# ── Comments ──────────────────────────────────────────────────────────────────
+
+@login_required(login_url='login')
+def add_comment(request, spell_id):
+    spell = get_object_or_404(Spell, pk=spell_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.spell = spell
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Ваш комментарий успешно добавлен!')
+        else:
+            messages.error(request, 'Ошибка при добавлении комментария.')
+
+    return redirect('spell_detail', spell_id=spell_id)

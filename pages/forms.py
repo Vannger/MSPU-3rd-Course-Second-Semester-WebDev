@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Spell, Tag
+from .models import Spell, Tag, Comment
 
 
 class SpellForm(forms.ModelForm):
@@ -77,3 +77,19 @@ class FeedbackForm(forms.Form):
         label='Сообщение',
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Напишите ваше сообщение здесь...'})
     )
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Write a comment…',
+            }),
+        }
+        labels = {
+            'text': 'Comment',
+        }
