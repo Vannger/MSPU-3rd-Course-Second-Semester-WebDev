@@ -256,6 +256,14 @@
     </div>
     <h2 class="section-title">Spells of Note</h2>
 
+    {% if active_tag %}
+    <div style="margin-bottom:20px; font-family:'Cinzel',serif; font-size:13px; color:var(--ink-mid);">
+        Showing spells tagged <span style="color:var(--gold-dark); font-weight:600;">{{ active_tag.name }}</span>
+        &nbsp;·&nbsp;
+        <a href="{% url 'home' %}" style="color:var(--ink-light); text-decoration:underline;">Clear filter</a>
+    </div>
+    {% endif %}
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
         {% for spell in spells %}
@@ -291,6 +299,13 @@
                         · Added {{ spell.add_date }}
                     </div>
                     <p class="spell-card-text">{{ spell.desc|truncatewords:20 }}</p>
+                    {% if spell.tags.all %}
+                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:-4px; margin-bottom:6px;">
+                        {% for tag in spell.tags.all %}
+                            <a href="{% url 'spells_by_tag' tag.id %}" style="font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; text-transform:uppercase; padding:2px 9px; border-radius:999px; background:var(--ink); color:var(--gold); border:1px solid var(--gold-dark); text-decoration:none;">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="spell-card-footer">
                     <div class="d-flex gap-2">

@@ -1,13 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Spell
+from .models import Spell, Tag
 
 
 class SpellForm(forms.ModelForm):
     class Meta:
         model = Spell
-        fields = ['name', 'spell_lvl', 'desc', 'add_date', 'image']
+        fields = ['name', 'spell_lvl', 'desc', 'add_date', 'image', 'tags']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'tome-input form-control',
@@ -31,6 +31,9 @@ class SpellForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={
                 'class': 'tome-input form-control',
             }),
+            'tags': forms.CheckboxSelectMultiple(attrs={
+                'class': 'tome-tags-checklist',
+            }),
         }
         labels = {
             'name':      'Spell Name',
@@ -38,6 +41,7 @@ class SpellForm(forms.ModelForm):
             'desc':      'Description',
             'add_date':  'Date Added',
             'image':     'Spell Image (optional)',
+            'tags':      'Tags',
         }
 
 
@@ -57,6 +61,7 @@ class RegisterForm(UserCreationForm):
         self.fields['username'].help_text = ''
         self.fields['password1'].help_text = ''
         self.fields['password2'].help_text = ''
+
 
 class FeedbackForm(forms.Form):
     subject = forms.CharField(

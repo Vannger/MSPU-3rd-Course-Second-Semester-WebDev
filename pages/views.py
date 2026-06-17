@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .forms import SpellForm, RegisterForm, FeedbackForm
-from .models import Spell
+from .models import Spell, Tag
 
 
 # ── Home ──────────────────────────────────────────────────────────────────────
@@ -23,6 +23,17 @@ def spell_detail(request, spell_id):
     return render(request, 'pages/detail.html', {
         'title': spell.name,
         'spell': spell,
+    })
+
+
+def spells_by_tag(request, tag_id):
+    tag = get_object_or_404(Tag, id=tag_id)
+    spells = tag.spells.all().order_by('spell_lvl', 'name')
+    return render(request, 'pages/index.html', {
+        'title': f'Tagged: {tag.name}',
+        'welcome_text': f'Spells marked with the "{tag.name}" tag.',
+        'spells': spells,
+        'active_tag': tag,
     })
 
 
@@ -81,6 +92,7 @@ def add_spell(request):
             spell = form.save(commit=False)
             spell.author = request.user
             spell.save()
+            form.save_m2m()
             messages.success(request, f'"{spell.name}" has been added to the compendium.')
             return redirect('home')
     else:
@@ -111,6 +123,7 @@ def edit_spell(request, spell_id):
         'form': form,
         'spell': spell,
     })
+
 
 def feedback_view(request):
     if request.method == 'POST':

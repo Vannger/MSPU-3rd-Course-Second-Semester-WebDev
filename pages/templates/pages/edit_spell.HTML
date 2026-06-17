@@ -86,6 +86,31 @@
     .tome-errors { list-style:none; padding:0; margin-top:5px; }
     .tome-errors li { font-size:13px; color:#8b2020; font-style:italic; }
     .tome-hint { font-size:12px; color:var(--ink-light); font-style:italic; margin-top:4px; }
+
+    /* ── Tags checklist ── */
+    .tome-tags-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 0;
+    }
+    .tome-tag-checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'EB Garamond', serif;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dark);
+        border-radius: 999px;
+        padding: 5px 14px;
+        cursor: pointer;
+        transition: border-color 0.15s;
+    }
+    .tome-tag-checkbox:hover { border-color: var(--gold-dark); }
+    .tome-tag-checkbox input { accent-color: var(--gold-dark); cursor: pointer; }
+
     .btn-submit {
         font-family: 'Cinzel', serif;
         font-size: 13px;
@@ -187,6 +212,19 @@
                 {% endif %}
                 {{ form.image }}
                 {% if form.image.errors %}<ul class="tome-errors">{% for e in form.image.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="tome-field">
+                <label class="tome-label">{{ form.tags.label }}</label>
+                <div class="tome-tags-box">
+                    {% for checkbox in form.tags %}
+                        <label class="tome-tag-checkbox">
+                            {{ checkbox.tag }}
+                            <span>{{ checkbox.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                {% if form.tags.errors %}<ul class="tome-errors">{% for e in form.tags.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
 
             <button type="submit" class="btn-submit">Save Changes</button>

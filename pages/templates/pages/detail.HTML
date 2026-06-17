@@ -128,6 +128,31 @@
         margin-bottom: 28px;
     }
 
+    .detail-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 28px;
+    }
+
+    .tag-pill {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--gold);
+        border: 1px solid var(--gold-dark);
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .tag-pill:hover {
+        background: var(--gold);
+        color: var(--ink);
+    }
+
     .detail-actions {
         display: flex;
         gap: 12px;
@@ -221,6 +246,15 @@
 
         <p class="detail-desc-label">Description</p>
         <p class="detail-desc">{{ spell.desc }}</p>
+
+        {% if spell.tags.all %}
+        <p class="detail-desc-label">Tags</p>
+        <div class="detail-tags">
+            {% for tag in spell.tags.all %}
+                <a href="{% url 'spells_by_tag' tag.id %}" class="tag-pill">{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="detail-actions">
             <a href="{% url 'home' %}" class="btn-back">← Back to the Compendium</a>
