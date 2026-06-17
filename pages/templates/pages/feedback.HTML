@@ -1,0 +1,225 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .feedback-hero {
+        background: var(--ink);
+        background-image: radial-gradient(ellipse at 50% 80%, rgba(139,99,64,0.2) 0%, transparent 60%);
+        color: var(--parchment);
+        padding: 56px 2rem 48px;
+        text-align: center;
+        border-bottom: 3px solid var(--gold);
+    }
+    .feedback-hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .feedback-hero h1 {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(24px, 4vw, 40px);
+        font-weight: 700;
+        color: var(--parchment);
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+    }
+    .feedback-hero p {
+        font-size: 16px;
+        font-style: italic;
+        color: var(--parchment-dark);
+        max-width: 480px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    .feedback-section { background: var(--parchment); padding: 48px 2rem 64px; }
+
+    .tome-form-card {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fdf6ea;
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 36px 40px;
+        position: relative;
+    }
+    .tome-form-card::before {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(196,164,106,0.3);
+        pointer-events: none;
+        border-radius: 1px;
+    }
+
+    .form-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        color: var(--ink);
+        letter-spacing: 1px;
+        margin-bottom: 28px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--parchment-dark);
+    }
+
+    .tome-field { margin-bottom: 22px; }
+
+    .tome-label {
+        display: block;
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--ink-light);
+        margin-bottom: 6px;
+    }
+
+    /* The form's widgets already carry class="form-control" from forms.py.
+       These rules restyle that same class to fit the parchment theme. */
+    .tome-form-card .form-control {
+        width: 100%;
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dark);
+        border-radius: 2px;
+        padding: 9px 13px;
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 15px;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        box-sizing: border-box;
+    }
+    .tome-form-card .form-control:focus {
+        border-color: var(--gold-dark);
+        box-shadow: 0 0 0 3px rgba(212,164,76,0.18);
+    }
+    .tome-form-card textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.7;
+    }
+
+    .tome-errors { list-style: none; padding: 0; margin-top: 5px; }
+    .tome-errors li { font-size: 13px; color: #8b2020; font-style: italic; }
+
+    .tome-error-banner {
+        background: #f9e8e8;
+        border: 1px solid #c98080;
+        border-radius: 2px;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #6b1e1e;
+        font-style: italic;
+    }
+
+    .btn-submit {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 11px 36px;
+        background: var(--gold-dark);
+        border: 1px solid var(--gold);
+        color: var(--parchment);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--gold); color: var(--ink); }
+
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 14px;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--ink-light);
+        text-decoration: none;
+    }
+    .cancel-link:hover { color: var(--ink); text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="feedback-hero">
+    <p class="feedback-hero-eyebrow">Send a Raven</p>
+    <h1>Get in Touch</h1>
+    <p>Questions, suggestions, or arcane mishaps to report? Send a message to the keepers of the compendium.</p>
+</div>
+
+<div class="feedback-section">
+    <div class="tome-form-card">
+        <div class="form-section-title">Compose Your Message</div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="tome-error-banner">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Subject -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.subject.id_for_label }}">
+                    {{ form.subject.label }}
+                </label>
+                {{ form.subject }}
+                {% if form.subject.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.subject.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.email.id_for_label }}">
+                    {{ form.email.label }}
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.email.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Message -->
+            <div class="tome-field">
+                <label class="tome-label" for="{{ form.text.id_for_label }}">
+                    {{ form.text.label }}
+                </label>
+                {{ form.text }}
+                {% if form.text.errors %}
+                    <ul class="tome-errors">
+                        {% for error in form.text.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Send Message</button>
+        </form>
+
+        <a href="{% url 'home' %}" class="cancel-link">← Return to the Compendium</a>
+    </div>
+</div>
+
+{% endblock %}

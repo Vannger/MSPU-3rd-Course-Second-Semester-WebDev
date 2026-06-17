@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib import admin
 from pages.views import (
     home, about, spell_detail, add_spell, edit_spell,
-    register_view, login_view, logout_view,
+    register_view, login_view, logout_view, feedback_view
 )
 
 urlpatterns = [
@@ -15,4 +15,5 @@ urlpatterns = [
     path('login/',login_view,    name='login'),
     path('logout/',logout_view,   name='logout'),
     path('admin/', admin.site.urls),
+    path('feedback/', feedback_view, name='feedback')
 ]

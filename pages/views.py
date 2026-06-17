@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .forms import SpellForm, RegisterForm
+from .forms import SpellForm, RegisterForm, FeedbackForm
 from .models import Spell
 
 
@@ -111,3 +111,13 @@ def edit_spell(request, spell_id):
         'form': form,
         'spell': spell,
     })
+
+def feedback_view(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            print("New Message", form.cleaned_data)
+            return redirect('home')
+    else:
+        form = FeedbackForm()
+    return render(request, 'pages/feedback.html', {'form': form})
