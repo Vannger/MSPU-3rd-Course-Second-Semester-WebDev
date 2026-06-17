@@ -23,7 +23,7 @@ class Spell(models.Model):
         return f'{self.name}, Уровень {self.spell_lvl}'
 
     def get_absolute_url(self):
-        return reverse('spell_detail', kwargs={'spell_id': self.id})
+        return reverse('spell_detail', kwargs={'pk': self.pk})
 
 
 class Comment(models.Model):

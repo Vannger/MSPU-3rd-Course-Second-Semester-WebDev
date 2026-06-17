@@ -272,6 +272,25 @@
         background: var(--gold);
         color: var(--ink);
     }
+
+    .btn-delete {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 9px 24px;
+        border-radius: 2px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: transparent;
+        border: 1px solid #8b2020;
+        color: #8b2020;
+    }
+    .btn-delete:hover {
+        background: #8b2020;
+        color: #fdf6ea;
+    }
 </style>
 {% endblock %}
 
@@ -334,6 +353,7 @@
             {% if user.is_authenticated %}
                 {% if user.is_staff or spell.author == user %}
                     <a href="{% url 'edit_spell' spell.id %}" class="btn-edit">Edit This Spell</a>
+                    <a href="{% url 'delete_spell' spell.id %}" class="btn-delete">Delete This Spell</a>
                 {% endif %}
             {% endif %}
         </div>

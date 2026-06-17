@@ -1,35 +1,50 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
 from .forms import SpellForm, RegisterForm, FeedbackForm, CommentForm
 from .models import Spell, Tag
 
 
-# ── Home ──────────────────────────────────────────────────────────────────────
+# ── Home (ListView) ─────────────────────────────────────────────────────────
 
-def home(request):
-    spells = Spell.objects.all().order_by('spell_lvl', 'name')
-    return render(request, 'pages/index.html', {
-        'title': 'Arcane Compendium',
-        'welcome_text': 'A tome of spells for adventurers of every discipline.',
-        'spells': spells,
-    })
+class Home(ListView):
+    model = Spell
+    template_name = 'pages/index.html'
+    context_object_name = 'spells'
+    ordering = ['-add_date']  # newest first, per task spec
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Arcane Compendium'
+        context['welcome_text'] = 'A tome of spells for adventurers of every discipline.'
+        return context
 
 
-def spell_detail(request, spell_id):
-    spell = get_object_or_404(Spell, id=spell_id)
-    return render(request, 'pages/detail.html', {
-        'title': spell.name,
-        'spell': spell,
-        'comment_form': CommentForm(),
-    })
+# ── Spell Detail (DetailView) ────────────────────────────────────────────────
 
+class SpellDetail(DetailView):
+    model = Spell
+    template_name = 'pages/detail.html'
+    context_object_name = 'spell'   # self.object is now available in template as {{ spell }}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.object.name
+        context['comment_form'] = CommentForm()
+        return context
+
+
+# ── Tag filter (kept as a function view — no model form/CBV needed here) ────
 
 def spells_by_tag(request, tag_id):
     tag = get_object_or_404(Tag, id=tag_id)
-    spells = tag.spells.all().order_by('spell_lvl', 'name')
+    spells = tag.spells.all().order_by('-add_date')
     return render(request, 'pages/index.html', {
         'title': f'Tagged: {tag.name}',
         'welcome_text': f'Spells marked with the "{tag.name}" tag.',
@@ -83,48 +98,78 @@ def logout_view(request):
     return redirect('home')
 
 
-# ── Spells ────────────────────────────────────────────────────────────────────
+# ── Spells: Create / Update / Delete (CBVs) ──────────────────────────────────
 
-@login_required(login_url='login')
-def add_spell(request):
-    if request.method == 'POST':
-        form = SpellForm(request.POST, request.FILES)
-        if form.is_valid():
-            spell = form.save(commit=False)
-            spell.author = request.user
-            spell.save()
-            form.save_m2m()
-            messages.success(request, f'"{spell.name}" has been added to the compendium.')
-            return redirect('home')
-    else:
-        form = SpellForm()
-    return render(request, 'pages/add_spell.html', {'title': 'Add a Spell', 'form': form})
+class AddSpell(LoginRequiredMixin, CreateView):
+    """LoginRequiredMixin must come FIRST (left) in the inheritance list,
+    otherwise the login check never runs."""
+    model = Spell
+    form_class = SpellForm
+    template_name = 'pages/add_spell.html'
+    login_url = 'login'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add a Spell'
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, f'"{self.object.name}" has been added to the compendium.')
+        return response
 
 
-@login_required(login_url='login')
-def edit_spell(request, spell_id):
-    spell = get_object_or_404(Spell, id=spell_id)
+class EditSpell(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Spell
+    form_class = SpellForm
+    template_name = 'pages/edit_spell.html'
+    login_url = 'login'
+    success_url = reverse_lazy('home')
 
-    # Only the author or an admin may edit
-    if not request.user.is_staff and spell.author != request.user:
-        messages.error(request, 'You can only edit spells you have added yourself.')
+    def test_func(self):
+        spell = self.get_object()
+        # Author OR staff/admin may edit — matches the original function-based view
+        return self.request.user.is_staff or spell.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'You can only edit spells you have added yourself.')
         return redirect('home')
 
-    if request.method == 'POST':
-        form = SpellForm(request.POST, request.FILES, instance=spell)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f'"{spell.name}" has been updated.')
-            return redirect('home')
-    else:
-        form = SpellForm(instance=spell)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit: {self.object.name}'
+        context['spell'] = self.object
+        return context
 
-    return render(request, 'pages/edit_spell.html', {
-        'title': f'Edit: {spell.name}',
-        'form': form,
-        'spell': spell,
-    })
+    def form_valid(self, form):
+        # Author is NOT reassigned on edit — only set once, at creation.
+        response = super().form_valid(form)
+        messages.success(self.request, f'"{self.object.name}" has been updated.')
+        return response
 
+
+class DeleteSpell(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Spell
+    template_name = 'pages/spell_confirm_delete.html'
+    login_url = 'login'
+    success_url = reverse_lazy('home')
+
+    def test_func(self):
+        spell = self.get_object()
+        return self.request.user.is_staff or spell.author == self.request.user
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'You can only delete spells you have added yourself.')
+        return redirect('home')
+
+    def form_valid(self, form):
+        messages.success(self.request, f'"{self.object.name}" has been removed from the compendium.')
+        return super().form_valid(form)
+
+
+# ── Feedback ──────────────────────────────────────────────────────────────────
 
 def feedback_view(request):
     if request.method == 'POST':
@@ -140,8 +185,8 @@ def feedback_view(request):
 # ── Comments ──────────────────────────────────────────────────────────────────
 
 @login_required(login_url='login')
-def add_comment(request, spell_id):
-    spell = get_object_or_404(Spell, pk=spell_id)
+def add_comment(request, pk):
+    spell = get_object_or_404(Spell, pk=pk)
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -154,4 +199,4 @@ def add_comment(request, spell_id):
         else:
             messages.error(request, 'Ошибка при добавлении комментария.')
 
-    return redirect('spell_detail', spell_id=spell_id)
+    return redirect('spell_detail', pk=pk)
