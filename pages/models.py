@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Spell(models.Model):
@@ -12,3 +13,6 @@ class Spell(models.Model):
 
     def __str__(self):
         return f'{self.name}, Уровень {self.spell_lvl}'
+
+    def get_absolute_url(self):
+        return reverse('spell_detail', kwargs={'spell_id': self.id})

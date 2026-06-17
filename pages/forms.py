@@ -50,7 +50,7 @@ class RegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs['class'] = 'tome-input'
+            field.widget.attrs['class'] = 'tome-input form-control'
         self.fields['username'].widget.attrs['placeholder'] = 'Choose a username'
         self.fields['password1'].widget.attrs['placeholder'] = 'Choose a password'
         self.fields['password2'].widget.attrs['placeholder'] = 'Repeat your password'

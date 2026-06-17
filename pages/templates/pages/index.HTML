@@ -261,22 +261,26 @@
         {% for spell in spells %}
         <div class="col">
             <div class="spell-card">
-                {% if spell.image %}
-                    <img src="{{ spell.image.url }}" alt="{{ spell.name }}" class="spell-card-img" style="object-fit:cover;">
-                {% else %}
-                    <svg class="spell-card-img" xmlns="http://www.w3.org/2000/svg" style="height:180px;">
-                        <rect width="100%" height="100%" fill="#1a0f06"/>
-                        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="48" fill="#d4a44c">
-                            {% if spell.spell_lvl == 0 %}✦
-                            {% elif spell.spell_lvl <= 3 %}🔥
-                            {% elif spell.spell_lvl <= 6 %}⚡
-                            {% else %}💀
-                            {% endif %}
-                        </text>
-                    </svg>
-                {% endif %}
+                <a href="{{ spell.get_absolute_url }}" style="display:block;">
+                    {% if spell.image %}
+                        <img src="{{ spell.image.url }}" alt="{{ spell.name }}" class="spell-card-img" style="object-fit:cover;">
+                    {% else %}
+                        <svg class="spell-card-img" xmlns="http://www.w3.org/2000/svg" style="height:180px;">
+                            <rect width="100%" height="100%" fill="#1a0f06"/>
+                            <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="48" fill="#d4a44c">
+                                {% if spell.spell_lvl == 0 %}✦
+                                {% elif spell.spell_lvl <= 3 %}🔥
+                                {% elif spell.spell_lvl <= 6 %}⚡
+                                {% else %}💀
+                                {% endif %}
+                            </text>
+                        </svg>
+                    {% endif %}
+                </a>
                 <div class="spell-card-body">
-                    <div class="spell-card-title">{{ spell.name }}</div>
+                    <a href="{{ spell.get_absolute_url }}" style="text-decoration:none; color:inherit;">
+                        <div class="spell-card-title">{{ spell.name }}</div>
+                    </a>
                     <div class="spell-card-subtitle">
                         {% if spell.spell_lvl == 0 %}Cantrip
                         {% elif spell.spell_lvl == 1 %}1st-level
@@ -289,14 +293,17 @@
                     <p class="spell-card-text">{{ spell.desc|truncatewords:20 }}</p>
                 </div>
                 <div class="spell-card-footer">
+                    <div class="d-flex gap-2">
+                        <a href="{{ spell.get_absolute_url }}" class="btn-card">View</a>
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff or spell.author == user %}
+                                <a href="{% url 'edit_spell' spell.id %}" class="btn-card">Edit</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                     <span class="card-level-tag">
                         {% if spell.spell_lvl == 0 %}Cantrip{% else %}Level {{ spell.spell_lvl }}{% endif %}
                     </span>
-                    {% if user.is_authenticated %}
-                        {% if user.is_staff or spell.author == user %}
-                            <a href="{% url 'edit_spell' spell.id %}" class="btn-card">Edit</a>
-                        {% endif %}
-                    {% endif %}
                 </div>
             </div>
         </div>

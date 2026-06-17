@@ -18,6 +18,14 @@ def home(request):
     })
 
 
+def spell_detail(request, spell_id):
+    spell = get_object_or_404(Spell, id=spell_id)
+    return render(request, 'pages/detail.html', {
+        'title': spell.name,
+        'spell': spell,
+    })
+
+
 # ── About ─────────────────────────────────────────────────────────────────────
 
 def about(request):
